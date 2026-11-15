@@ -1,0 +1,7 @@
+[submodule "libs/jerrycurl"]
+	path = libs/jerrycurl
+	url = https://github.com/thmskv/jerrycurl
+	branch = feat/relaunch-pages
+[submodule "libs/jerrycurl-visualstudio"]
+	path = libs/jerrycurl-visualstudio
+	url = https://github.com/thmskv/jerrycurl-visualstudio
