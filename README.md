@@ -1,4 +1,4 @@
-# Jerrycurl for Visual Studio Code
+# Jerrycurl for VS Code
 
 Syntax highlighting and file icons for [Jerrycurl](https://github.com/thmskv/jerrycurl) files:
 

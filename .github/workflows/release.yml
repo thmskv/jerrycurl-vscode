@@ -34,14 +34,14 @@ jobs:
         run: echo "tag=v$(bun scripts/version.mjs --write)" >> "$GITHUB_OUTPUT"
 
       - name: Package
-        run: bun run package --out "jerrycurl-vscode-${{ steps.version.outputs.tag }}.vsix"
+        run: bun run package --out jerrycurl-vscode.vsix
 
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ steps.version.outputs.tag }}" \
-            "jerrycurl-vscode-${{ steps.version.outputs.tag }}.vsix" \
+            jerrycurl-vscode.vsix \
             --target "${{ github.sha }}" \
             --title "${{ steps.version.outputs.tag }}" \
             --generate-notes

@@ -1,6 +1,6 @@
 {
   "name": "jerrycurl-vscode",
-  "displayName": "Jerrycurl",
+  "displayName": "Jerrycurl for VS Code",
   "description": "Syntax highlighting and file icons for Jerrycurl .cssql (Razor SQL) and .orm files.",
   "version": "0.1.0",
   "publisher": "jerrycurl",
