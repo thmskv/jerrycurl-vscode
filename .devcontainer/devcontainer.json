@@ -1,0 +1,30 @@
+{
+  "name": "jerrycurl-vscode",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu26.04",
+  "features": {
+    "ghcr.io/devcontainers/features/node:2": {}
+  },
+  "mounts": [
+    "source=jerrycurl-claude-config,target=/home/vscode/.claude,type=volume"
+  ],
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
+    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+    "DOTNET_NOLOGO": "1"
+  },
+  "customizations": {
+    "codespaces": {
+      "repositories": {
+        "thmskv/jerrycurl-visualstudio": {
+          "permissions": "read-all"
+        }
+      }
+    },
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code"
+      ]
+    }
+  },
+  "remoteUser": "vscode"
+}
