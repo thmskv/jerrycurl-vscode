@@ -1,0 +1,47 @@
+name: Release
+
+# Every push to main produces a release versioned <major>.<minor>.<git height>,
+# where major.minor comes from package.json (see scripts/version.mjs).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history for git height
+          submodules: true # libs/jerrycurl: its .cssql files are used as grammar test samples
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun test
+
+      - name: Compute version
+        id: version
+        run: echo "tag=v$(bun scripts/version.mjs --write)" >> "$GITHUB_OUTPUT"
+
+      - name: Package
+        run: bun run package --out "jerrycurl-vscode-${{ steps.version.outputs.tag }}.vsix"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            "jerrycurl-vscode-${{ steps.version.outputs.tag }}.vsix" \
+            --target "${{ github.sha }}" \
+            --title "${{ steps.version.outputs.tag }}" \
+            --generate-notes

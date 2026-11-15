@@ -1,0 +1,528 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Jerrycurl SQL",
+  "scopeName": "source.cssql",
+  "fileTypes": [
+    "cssql"
+  ],
+  "patterns": [
+    {
+      "include": "#razor"
+    },
+    {
+      "include": "#sql"
+    }
+  ],
+  "repository": {
+    "razor": {
+      "patterns": [
+        {
+          "include": "#escape"
+        },
+        {
+          "include": "#razor-comment"
+        },
+        {
+          "include": "#razor-statement-block"
+        },
+        {
+          "include": "#razor-explicit-expression"
+        },
+        {
+          "include": "#razor-directive-type"
+        },
+        {
+          "include": "#razor-directive-namespace"
+        },
+        {
+          "include": "#razor-directive-template"
+        },
+        {
+          "include": "#razor-directive-injection"
+        },
+        {
+          "include": "#razor-loop"
+        },
+        {
+          "include": "#razor-conditional"
+        },
+        {
+          "include": "#razor-else"
+        },
+        {
+          "include": "#razor-keyword"
+        },
+        {
+          "include": "#razor-implicit-expression"
+        },
+        {
+          "include": "#razor-brace"
+        },
+        {
+          "include": "#razor-invalid-transition"
+        }
+      ]
+    },
+    "escape": {
+      "comment": "@@, {{ and }} emit a literal @, { and } into the SQL output.",
+      "match": "@@|\\{\\{|\\}\\}",
+      "name": "constant.character.escape.razor.cssql"
+    },
+    "razor-comment": {
+      "begin": "@\\*",
+      "end": "\\*@",
+      "name": "comment.block.razor.cssql",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.begin.razor.cssql"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.end.razor.cssql"
+        }
+      }
+    },
+    "razor-statement-block": {
+      "comment": "@{ ... } - C# statements.",
+      "begin": "(@)(\\{)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.razor.transition.cssql"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "keyword.control.razor.transition.cssql"
+        }
+      },
+      "contentName": "meta.embedded.block.cs",
+      "patterns": [
+        {
+          "include": "source.cs#script-top-level"
+        }
+      ]
+    },
+    "razor-explicit-expression": {
+      "comment": "@( ... ) - C# expression.",
+      "begin": "(@)(\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.razor.transition.cssql"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "keyword.control.razor.transition.cssql"
+        }
+      },
+      "contentName": "meta.embedded.line.cs",
+      "patterns": [
+        {
+          "include": "source.cs#expression"
+        }
+      ]
+    },
+    "razor-directive-type": {
+      "comment": "@model, @result, @class - rest of line is a C# type.",
+      "begin": "(@)(model|result|class)(?![\\p{L}\\p{N}_])",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.razor.directive.cssql"
+        }
+      },
+      "end": "$",
+      "contentName": "meta.embedded.line.cs",
+      "patterns": [
+        {
+          "include": "source.cs#type"
+        }
+      ]
+    },
+    "razor-directive-namespace": {
+      "comment": "@namespace, @import - rest of line is a namespace.",
+      "begin": "(@)(namespace|import)(?![\\p{L}\\p{N}_])",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.razor.directive.cssql"
+        }
+      },
+      "end": "$",
+      "contentName": "meta.embedded.line.cs",
+      "patterns": [
+        {
+          "match": "\\bstatic\\b",
+          "name": "storage.modifier.static.cs"
+        },
+        {
+          "match": "([\\p{L}_][\\p{L}\\p{N}_]*)\\s*(=)",
+          "captures": {
+            "1": {
+              "name": "entity.name.type.alias.cs"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.cs"
+            }
+          }
+        },
+        {
+          "match": "[\\p{L}_][\\p{L}\\p{N}_]*",
+          "name": "entity.name.type.namespace.cs"
+        },
+        {
+          "match": "\\.",
+          "name": "punctuation.accessor.cs"
+        },
+        {
+          "include": "source.cs#comment"
+        }
+      ]
+    },
+    "razor-directive-template": {
+      "comment": "@template - rest of line is the argument list of a [Template(...)] attribute.",
+      "begin": "(@)(template)(?![\\p{L}\\p{N}_])",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.razor.directive.cssql"
+        }
+      },
+      "end": "$",
+      "contentName": "meta.embedded.line.cs",
+      "patterns": [
+        {
+          "include": "source.cs#attribute-named-argument"
+        },
+        {
+          "include": "source.cs#expression"
+        },
+        {
+          "include": "source.cs#punctuation-comma"
+        }
+      ]
+    },
+    "razor-directive-injection": {
+      "comment": "@inject <Type> <name>, @project <Type> <name>.",
+      "begin": "(@)(inject|project)(?![\\p{L}\\p{N}_])(?:[ \\t]+(\\S+))?(?:[ \\t]+([\\p{L}_][\\p{L}\\p{N}_]*))?",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.razor.directive.cssql"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.cs#type"
+            }
+          ]
+        },
+        "4": {
+          "name": "entity.name.variable.property.cs"
+        }
+      },
+      "end": "$",
+      "contentName": "meta.embedded.line.cs"
+    },
+    "razor-loop": {
+      "comment": "@foreach (...), @for (...), @using (...) - the body that follows is SQL wrapped in { }.",
+      "begin": "(@)(?=(?:foreach|for|using)\\s*\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        }
+      },
+      "end": "(?<=\\))",
+      "contentName": "meta.embedded.line.cs",
+      "patterns": [
+        {
+          "include": "source.cs#foreach-statement"
+        },
+        {
+          "include": "source.cs#for-statement"
+        },
+        {
+          "include": "source.cs#using-statement"
+        }
+      ]
+    },
+    "razor-conditional": {
+      "comment": "@if (...), @else if (...), @while (...).",
+      "begin": "(@)(?:(else)\\s+)?(if|while)\\s*(?=\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.conditional.else.cs"
+        },
+        "3": {
+          "patterns": [
+            {
+              "match": "if",
+              "name": "keyword.control.conditional.if.cs"
+            },
+            {
+              "match": "while",
+              "name": "keyword.control.loop.while.cs"
+            }
+          ]
+        }
+      },
+      "end": "(?<=\\))",
+      "contentName": "meta.embedded.line.cs",
+      "patterns": [
+        {
+          "include": "source.cs#parenthesized-expression"
+        }
+      ]
+    },
+    "razor-else": {
+      "match": "(@)(else)(?![\\p{L}\\p{N}_])",
+      "captures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.conditional.else.cs"
+        }
+      }
+    },
+    "razor-keyword": {
+      "comment": "Keyword blocks without a parenthesized header.",
+      "match": "(@)(if|else|foreach|for|while|using)(?![\\p{L}\\p{N}_])",
+      "captures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.cs"
+        }
+      }
+    },
+    "razor-implicit-expression": {
+      "comment": "@Identifier followed by any chain of .member, (...), [...], {...} and <...>.",
+      "begin": "(@)(?:(this)(?![\\p{L}\\p{N}_])|([\\p{L}_][\\p{L}\\p{N}_]*))",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "variable.language.this.cs"
+        },
+        "3": {
+          "name": "variable.other.object.cs"
+        }
+      },
+      "end": "(?!\\.[\\p{L}_]|[(\\[{]|<[^<>\\r\\n]*>)",
+      "contentName": "meta.embedded.line.cs",
+      "patterns": [
+        {
+          "match": "(\\.)([\\p{L}_][\\p{L}\\p{N}_]*)(?=\\s*(?:<[^<>\\r\\n]*>)?\\()",
+          "captures": {
+            "1": {
+              "name": "punctuation.accessor.cs"
+            },
+            "2": {
+              "name": "entity.name.function.cs"
+            }
+          }
+        },
+        {
+          "match": "(\\.)([\\p{L}_][\\p{L}\\p{N}_]*)",
+          "captures": {
+            "1": {
+              "name": "punctuation.accessor.cs"
+            },
+            "2": {
+              "name": "variable.other.object.property.cs"
+            }
+          }
+        },
+        {
+          "include": "source.cs#type-arguments"
+        },
+        {
+          "include": "source.cs#argument-list"
+        },
+        {
+          "include": "source.cs#bracketed-argument-list"
+        },
+        {
+          "begin": "\\{",
+          "end": "\\}",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.curlybrace.open.cs"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.curlybrace.close.cs"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.cs#script-top-level"
+            }
+          ]
+        }
+      ]
+    },
+    "razor-brace": {
+      "comment": "A lone { or } is a Razor tag that opens/closes a C# block around SQL content.",
+      "match": "[{}]",
+      "name": "keyword.control.razor.transition.cssql"
+    },
+    "razor-invalid-transition": {
+      "match": "@",
+      "name": "invalid.illegal.razor.transition.cssql"
+    },
+    "sql": {
+      "patterns": [
+        {
+          "include": "#sql-comment-line"
+        },
+        {
+          "include": "#sql-comment-block"
+        },
+        {
+          "include": "#sql-string"
+        },
+        {
+          "include": "#sql-quoted-identifier"
+        },
+        {
+          "include": "#sql-number"
+        },
+        {
+          "include": "#sql-keyword"
+        },
+        {
+          "include": "#sql-operator"
+        },
+        {
+          "include": "#sql-punctuation"
+        }
+      ]
+    },
+    "sql-comment-line": {
+      "begin": "--",
+      "end": "$",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.sql"
+        }
+      },
+      "name": "comment.line.double-dash.sql",
+      "patterns": [
+        {
+          "include": "#razor"
+        }
+      ]
+    },
+    "sql-comment-block": {
+      "begin": "/\\*",
+      "end": "\\*/",
+      "captures": {
+        "0": {
+          "name": "punctuation.definition.comment.sql"
+        }
+      },
+      "name": "comment.block.sql",
+      "patterns": [
+        {
+          "include": "#razor"
+        }
+      ]
+    },
+    "sql-string": {
+      "begin": "[Nn]?'",
+      "end": "'(?!')",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.sql"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.sql"
+        }
+      },
+      "name": "string.quoted.single.sql",
+      "patterns": [
+        {
+          "match": "''",
+          "name": "constant.character.escape.sql"
+        },
+        {
+          "include": "#razor"
+        }
+      ]
+    },
+    "sql-quoted-identifier": {
+      "begin": "\\\"",
+      "end": "\"|$",
+      "name": "string.quoted.double.sql",
+      "patterns": [
+        {
+          "include": "#razor"
+        }
+      ]
+    },
+    "sql-number": {
+      "match": "(?<![\\p{L}\\p{N}_])\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?(?![\\p{L}\\p{N}_])",
+      "name": "constant.numeric.sql"
+    },
+    "sql-keyword": {
+      "comment": "SQL:99 keywords plus vendor keywords, as classified by the Visual Studio extension.",
+      "match": "(?<![\\p{L}\\p{N}_$#])(?i:current_transform_group_for_type|current_default_transform_group|current_timestamp|timezone_minute|localtimestamp|authorization|corresponding|deterministic|timezone_hour|current_date|current_path|current_roll|current_time|current_user|session_user|specifictype|sqlexception|constraints|constructor|diagnostics|referencing|system_user|transaction|translation|completion|connection|constraint|deallocate|deferrable|descriptor|destructor|dictionary|disconnect|initialize|ordinality|parameters|privileges|references|sqlwarning|aggregate|assertion|character|collation|condition|exception|immediate|indicator|initially|intersect|isolation|localtime|operation|parameter|precision|procedure|recursive|savepoint|statement|structure|temporary|terminate|timestamp|absolute|allocate|cascaded|coalesce|continue|deferred|describe|distinct|end\\-exec|external|function|grouping|identity|interval|language|modifies|national|preorder|preserve|relative|resignal|restrict|rollback|sequence|smallint|specific|sqlstate|trailing|variable|whenever|boolean|breadth|cascade|catalog|collate|connect|current|decimal|declare|default|destroy|dynamic|execute|foreign|general|handler|integer|iterate|lateral|leading|locator|matched|natural|nesting|numeric|partial|postfix|prepare|primary|returns|routine|section|session|trigger|unknown|varchar|varying|without|action|before|binary|column|commit|create|cursor|delete|domain|double|elseif|equals|escape|except|exists|global|having|ignore|insert|isnull|minute|modify|module|object|offset|option|output|prefix|public|repeat|result|return|revoke|rollup|schema|scroll|search|second|select|signal|static|unique|unnest|update|values|admin|after|alias|alter|apply|array|begin|check|class|close|cross|cycle|depth|deref|every|false|fetch|first|float|found|grant|group|inner|inout|input|large|leave|level|limit|local|match|merge|month|names|nchar|nclob|order|outer|prior|reads|right|scope|space|start|state|table|treat|under|union|until|usage|using|value|where|while|write|blob|both|call|case|cast|char|clob|cube|data|date|desc|drop|each|else|exec|exit|free|from|full|goto|host|hour|into|join|last|left|less|like|loop|next|none|null|only|open|path|read|real|redo|role|rows|sets|size|some|than|then|time|true|type|undo|user|view|when|with|work|year|zone|add|all|and|any|are|asc|bit|day|dec|end|for|get|int|key|map|new|not|off|old|out|pad|ref|row|set|sql|top|as|at|by|do|go|if|in|is|no|of|on|or|to)(?![\\p{L}\\p{N}_])",
+      "name": "keyword.other.sql"
+    },
+    "sql-operator": {
+      "match": "<>|!=|<=|>=|\\|\\||::|[=<>+\\-*/%]",
+      "name": "keyword.operator.sql"
+    },
+    "sql-punctuation": {
+      "patterns": [
+        {
+          "match": ",",
+          "name": "punctuation.separator.comma.sql"
+        },
+        {
+          "match": ";",
+          "name": "punctuation.terminator.statement.sql"
+        },
+        {
+          "match": "\\(",
+          "name": "punctuation.parenthesis.open.sql"
+        },
+        {
+          "match": "\\)",
+          "name": "punctuation.parenthesis.close.sql"
+        },
+        {
+          "match": "\\.",
+          "name": "punctuation.separator.period.sql"
+        }
+      ]
+    }
+  }
+}

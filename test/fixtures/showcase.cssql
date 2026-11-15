@@ -1,0 +1,41 @@
+@result MyApp.Views.MovieView
+@model MyApp.Filters.MovieFilter
+@import MyApp.Database
+@project MovieDetails d
+@inject IClock clock
+@* Razor comments are stripped from the generated SQL. *@
+@{
+    var c = this.R.Open(m => m.Cast);
+    var since = clock.Now.AddYears(-10);
+}
+
+-- Plain SQL comment with an expression: @R.Tbl()
+SELECT
+    @R.Map(),
+    @R.Map(m => m.Details),
+    @(since.Year) AS SinceYear,
+    @@IDENTITY AS LastId
+FROM
+    @R.Tbl()
+LEFT JOIN
+    @R.Tbl(m => m.Details) ON @R.Col(m => m.Details.MovieId) = @R.Col(m => m.Id)
+WHERE
+    @R.Col(m => m.Title) LIKE '%' + @M.Par(m => m.Title) + '%'
+@if (this.M.Any())
+{
+    AND @R.Col(m => m.Year) >= @M.Par(m => m.Year)
+}
+@else
+{
+    AND 1 = 1
+}
+ORDER BY @R.Col(m => m.Title);
+
+@foreach (var v in this.M.Vals())
+{
+    INSERT INTO @v.TblName() ( @v.In().ColNames() )
+    VALUES ( @v.In().Pars() );
+}
+
+/* JSON in SQL needs escaped braces: */
+SELECT '{{ "key": 1 }}' AS Json;

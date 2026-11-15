@@ -1,0 +1,6 @@
+{
+  "$schema": "https://raw.githubusercontent.com/thmskv/jerrycurl/main/eng/orm.schema.json",
+  "connection": "Server=.;Database=Movies;Trusted_Connection=True",
+  "vendor": "sqlserver",
+  "namespace": "MyApp.Database"
+}

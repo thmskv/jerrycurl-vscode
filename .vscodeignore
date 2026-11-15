@@ -1,0 +1,10 @@
+.devcontainer/**
+.vscode/**
+.gitmodules
+libs/**
+test/**
+node_modules/**
+**/*.vsix
+.gitignore
+bun.lock
+.github/**

@@ -2,21 +2,16 @@
   "name": "jerrycurl-vscode",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu26.04",
   "features": {
-    "ghcr.io/devcontainers/features/node:2": {}
+    "ghcr.io/shyim/devcontainers-features/bun:0": {}
   },
   "customizations": {
-    "codespaces": {
-      "repositories": {
-        "thmskv/jerrycurl-visualstudio": {
-          "permissions": "read-all"
-        }
-      }
-    },
     "vscode": {
       "extensions": [
-        "anthropic.claude-code"
+        "anthropic.claude-code",
+        "oven.bun-vscode"
       ]
     }
   },
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
+  "postCreateCommand": "bun install"
 }
