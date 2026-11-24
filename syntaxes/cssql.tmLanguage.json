@@ -41,6 +41,15 @@
           "include": "#razor-directive-injection"
         },
         {
+          "include": "#razor-directive-page-kind"
+        },
+        {
+          "include": "#razor-directive-visibility"
+        },
+        {
+          "include": "#razor-directive-properties"
+        },
+        {
           "include": "#razor-loop"
         },
         {
@@ -240,6 +249,88 @@
       },
       "end": "$",
       "contentName": "meta.embedded.line.cs"
+    },
+    "razor-directive-page-kind": {
+      "comment": "@query, @command - mark the page as a query or command; takes no arguments.",
+      "begin": "(@)(query|command)(?![\\p{L}\\p{N}_])",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.razor.directive.cssql"
+        }
+      },
+      "end": "$",
+      "patterns": [
+        {
+          "match": "\\S.*",
+          "name": "invalid.illegal.argument.cssql"
+        }
+      ]
+    },
+    "razor-directive-visibility": {
+      "comment": "@visibility public|internal.",
+      "begin": "(@)(visibility)(?![\\p{L}\\p{N}_])",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.razor.directive.cssql"
+        }
+      },
+      "end": "$",
+      "contentName": "meta.embedded.line.cs",
+      "patterns": [
+        {
+          "match": "(?<![\\p{L}\\p{N}_])(public|internal)(?![\\p{L}\\p{N}_])",
+          "name": "storage.modifier.$1.cs"
+        },
+        {
+          "match": "\\S+",
+          "name": "invalid.illegal.argument.cssql"
+        }
+      ]
+    },
+    "razor-directive-properties": {
+      "comment": "@input, @output - comma-separated <type> <name> [= default] properties.",
+      "begin": "(@)(input|output)(?![\\p{L}\\p{N}_])",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.razor.transition.cssql"
+        },
+        "2": {
+          "name": "keyword.control.razor.directive.cssql"
+        }
+      },
+      "end": "$",
+      "contentName": "meta.embedded.line.cs",
+      "patterns": [
+        {
+          "include": "source.cs#comment"
+        },
+        {
+          "begin": "(=)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.operator.assignment.cs"
+            }
+          },
+          "end": "(?=,)|$",
+          "patterns": [
+            {
+              "include": "source.cs#expression"
+            }
+          ]
+        },
+        {
+          "include": "source.cs#parameter"
+        },
+        {
+          "include": "source.cs#punctuation-comma"
+        }
+      ]
     },
     "razor-loop": {
       "comment": "@foreach (...), @for (...), @using (...) - the body that follows is SQL wrapped in { }.",
