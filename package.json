@@ -1,7 +1,7 @@
 {
   "name": "jerrycurl-vscode",
   "displayName": "Jerrycurl for VS Code",
-  "description": "Syntax highlighting and file icons for Jerrycurl .cssql (Razor SQL) and .orm files.",
+  "description": "Syntax highlighting, file icons and C# Dev Kit file templates for Jerrycurl .cssql (Razor SQL) and .orm files.",
   "version": "0.1.0",
   "publisher": "jerrycurl",
   "license": "MIT",
@@ -23,7 +23,21 @@
     "sql",
     "orm"
   ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "extensionDependencies": [
+    "ms-dotnettools.csdevkit"
+  ],
   "contributes": {
+    "commands": [
+      {
+        "command": "jerrycurl.installTemplates",
+        "title": "Reinstall .cssql Item Templates",
+        "category": "Jerrycurl"
+      }
+    ],
     "languages": [
       {
         "id": "cssql",

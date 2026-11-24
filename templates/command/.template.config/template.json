@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Jerrycurl",
+  "classifications": ["Jerrycurl", "SQL", "Razor"],
+  "identity": "Jerrycurl.Templates.RazorSqlCommand",
+  "groupIdentity": "Jerrycurl.Templates.RazorSqlCommand",
+  "name": "Razor SQL Command",
+  "description": "A Jerrycurl .cssql command file.",
+  "shortName": "cssql-command",
+  "defaultName": "Command",
+  "sourceName": "RazorSqlCommand1",
+  "tags": {
+    "type": "item"
+  },
+  "primaryOutputs": [
+    { "path": "RazorSqlCommand1.cssql" }
+  ]
+}
